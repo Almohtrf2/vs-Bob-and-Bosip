@@ -24,7 +24,7 @@ class OptionsSubState extends MusicBeatSubstate
 	var selector:FlxText;
 	var curSelected:Int = 0;
 	
-	var curCat:Int = 0;
+	var curPage:Int = 0;
 	var pageMax:Int = 0;
 
 	var rightArrow:FlxSprite;
@@ -39,25 +39,19 @@ class OptionsSubState extends MusicBeatSubstate
 
 	var options:Array<OptionCategory> = [
 		new OptionCategory("Appearance", [
-			#if desktop
 			new DistractionsAndEffectsOption("Toggle stage distractions that can hinder your gameplay."),
 			new RainbowFPSOption("Make the FPS Counter Rainbow"),
 			new AccuracyOption("Display accuracy information."),
 			new NPSDisplayOption("Shows your current Notes Per Second."),
 			new SongPositionOption("Show the songs current position (as a bar)"),
-			#else
-			new DistractionsAndEffectsOption("Toggle stage distractions that can hinder your gameplay.")
-			#end
 		]),
 		new OptionCategory("Gameplay", [
 			new DFJKOption(controls),
+			new CustomizeControls("Mobile Controls."),				
 			new DownscrollOption("Change the layout of the strumline."),
 			new GhostTapOption("Ghost Tapping is when you tap a direction and it doesn't give you a miss."),
-			new LowDetailOption('Optimizes the game to run on lower end computers!'),
 			new Judgement("Customize your Hit Timings (LEFT or RIGHT)"),
-			#if desktop
 			new FPSCapOption("Cap your FPS"),
-			#end
 			new ScrollSpeedOption("Change your scroll speed (1 = Chart dependent)"),
 			new AccuracyDOption("Change how accuracy is calculated. (Accurate = Simple, Complex = Milisecond Based)"),
 			new ResetButtonOption("Toggle pressing R to gameover."),
@@ -67,15 +61,11 @@ class OptionsSubState extends MusicBeatSubstate
 		
 		
 		new OptionCategory("Misc", [
-			#if desktop
 			new FPSOption("Toggle the FPS Counter"),
-			new ReplayOption("View replays"),
-			#end
 			new FlashingLightsOption("Toggle flashing lights that can cause epileptic seizures and strain."),
 			new WatermarkOption("Enable and disable all watermarks from the engine."),
 			new BotPlay("Showcase your charts and mods with autoplay."),
-			new EraseSaveData("Erase ALL your save data. WARNING: this will close your game."),
-			new EEE("Scroll down in the loading gallery!"),
+			new EraseSaveData("Erase ALL your save data. WARNING: this will close your game.")
 		])
 		
 	];
@@ -420,7 +410,6 @@ class OptionsSubState extends MusicBeatSubstate
 
 		for (i in 0...currentSelectedCat.getOptions().length)
 		{
-			
 			var controlBar = new FlxSprite(170 + (FlxG.width * (Math.floor(i / 5))), 97 + (102 * (i % 5))).makeGraphic(900, 100, FlxColor.BLACK);
 			controlBar.alpha = 0;
 			grpBars.add(controlBar);
@@ -428,16 +417,11 @@ class OptionsSubState extends MusicBeatSubstate
 			var controlLabel = new FlxSprite(170 + (FlxG.width * (Math.floor(i / 5))), 97 + (102 * (i % 5))).loadGraphic(Paths.image('desktop/settings/text/' + currentSelectedCat.getOptions()[i].getDisplay()));
 			grpControls.add(controlLabel);
 
-			if (i == currentSelectedCat.getOptions().length - 1 && cat == 2) {
-				controlLabel.setPosition(170 + (FlxG.width * 2), 97 + (102 * 1));
-				controlBar.setPosition(170 + (FlxG.width * 2), 97 + (102 * 1));
-			}
+			
 			pageMax = Math.floor(i / 5);
-			if (cat == 2)
-				pageMax++;
 		}
 
-		curCat = 0;
+		curPage = 0;
 
 		if (!isCat) {
 			rightArrow = new FlxSprite(1126, 613).loadGraphic(Paths.image('desktop/settings/exitButton'));
@@ -453,16 +437,16 @@ class OptionsSubState extends MusicBeatSubstate
 	function changePage(change:Int = 0) 
 	{
 		acceptInput = false;
-		var prevPage = curCat; 
-		curCat += change;
-		if (curCat < 0) {
-			curCat = 0;
+		var prevPage = curPage; 
+		curPage += change;
+		if (curPage < 0) {
+			curPage = 0;
 			acceptInput = true;
-		} else if (curCat > pageMax) {
-			curCat = pageMax;
+		} else if (curPage > pageMax) {
+			curPage = pageMax;
 			acceptInput = true;
 		}
-		if (prevPage != curCat) {
+		if (prevPage != curPage) {
 			for (i in grpControls) {
 				FlxTween.tween(i, {x: i.x + FlxG.width * -change}, 1, {
 					ease: FlxEase.quadOut,
